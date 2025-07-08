@@ -34,10 +34,12 @@ def render_pdf_viewer(paper):
     if pdf_url:
         pdf_bytes = fetch_pdf_from_url(pdf_url)
         if pdf_bytes and PDF_VIEWER_AVAILABLE:
-            pdf_viewer(pdf_bytes)
+            # Set a large height; the parent div will handle scrolling
+            pdf_viewer(pdf_bytes, height=1200)
         elif pdf_bytes:
             base64_pdf = base64.b64encode(pdf_bytes).decode('utf-8')
-            pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>'
+            # Set a large height in pixels for the iframe
+            pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="1200px" type="application/pdf"></iframe>'
             st.markdown(pdf_display, unsafe_allow_html=True)
         else:
             st.warning("Could not display the PDF. Please try opening it in a new tab or uploading a local copy.")
@@ -57,10 +59,10 @@ def render_local_pdf(pdf_path):
         with open(pdf_path, "rb") as pdf_file:
             pdf_bytes = pdf_file.read()
             if PDF_VIEWER_AVAILABLE:
-                pdf_viewer(pdf_bytes)
+                pdf_viewer(pdf_bytes, height=1200)
             else:
                 base64_pdf = base64.b64encode(pdf_bytes).decode('utf-8')
-                pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>'
+                pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="1200px" type="application/pdf"></iframe>'
                 st.markdown(pdf_display, unsafe_allow_html=True)
     except Exception as e:
         st.error(f"Error loading local PDF: {e}")
@@ -78,8 +80,8 @@ def render_pdf_upload_option():
     if uploaded_file is not None:
         pdf_bytes = uploaded_file.getvalue()
         if PDF_VIEWER_AVAILABLE:
-            pdf_viewer(pdf_bytes)
+            pdf_viewer(pdf_bytes, height=1200)
         else:
             base64_pdf = base64.b64encode(pdf_bytes).decode('utf-8')
-            pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>'
+            pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="1200px" type="application/pdf"></iframe>'
             st.markdown(pdf_display, unsafe_allow_html=True)

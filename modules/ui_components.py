@@ -39,6 +39,19 @@ def inject_custom_css():
             .stTabs {
                 border-bottom: 1px solid #444;
             }
+
+            /* --- NEW STYLES FOR SCROLLABLE COLUMNS --- */
+            .main .block-container {
+                padding-top: 2rem;
+            }
+            .scrollable-column {
+                height: 90vh;
+                overflow-y: auto;
+                padding: 0 1rem;
+            }
+            .pdf-column iframe {
+                min-height: 1200px;
+            }
         </style>
     """, unsafe_allow_html=True)
 
@@ -93,27 +106,33 @@ def render_question(question, saved_value, paper_id):
     q_text = question['text']
     q_type = question['type']
     
+    key = f"paper_{paper_id}_q_{q_id}"
+    
     st.markdown(f"**Q{q_id + 1}:** {q_text}")
     
     response = None
     
     if q_type == "text":
         response = st.text_area(
-            "",
+            q_text,
             value=saved_value or "",
             height=100,
-            key=f"paper_{paper_id}_q{q_id}",
+            key=key,
             placeholder="Enter your response...",
             label_visibility="collapsed"
         )
     elif q_type == "multiple_choice":
         options = question.get('options', [])
-        default_idx = options.index(saved_value) if saved_value in options else 0
+        # Ensure saved_value is valid before finding its index
+        try:
+            default_idx = options.index(saved_value) if saved_value in options else 0
+        except ValueError:
+            default_idx = 0
         response = st.selectbox(
-            "",
+            q_text,
             options=options,
             index=default_idx,
-            key=f"paper_{paper_id}_q{q_id}",
+            key=key,
             label_visibility="collapsed"
         )
     elif q_type == "rating":
@@ -122,11 +141,11 @@ def render_question(question, saved_value, paper_id):
         default_val = int(saved_value) if saved_value and str(saved_value).isdigit() else min_val
         
         response = st.slider(
-            "",
+            q_text,
             min_value=min_val,
             max_value=max_val,
             value=default_val,
-            key=f"paper_{paper_id}_q{q_id}",
+            key=key,
             label_visibility="collapsed"
         )
 

@@ -1,2 +1,4 @@
 responses.json
 copied
+modules/__pycache__/** 
+.venv/** 
